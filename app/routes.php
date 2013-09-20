@@ -11,7 +11,18 @@
 |
 */
 
-Route::get('/', function()
+Route::get('users/{id}', function($id)
 {
-	return View::make('hello');
+	var_dump("User with the id of $id");
 });
+
+Route::resource('posts', 'PostsController');
+
+// Route::get('/','HomeController@getIndex');
+// Route::get('login','HomeController@getLogin');
+Route::controller('/','HomeController');
+
+
+
+?>
+
