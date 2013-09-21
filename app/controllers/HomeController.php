@@ -16,9 +16,9 @@ class HomeController extends BaseController {
 	public function postLogin() {
 		$username = Input::get('username');
 		$password = Input::get('password');
-		$attempt = array('username' => $username, 'password' => $password);
-		if (Auth::attempt($attempt)) {
-			return "welcome back!";
+		$credentials = array('username' => $username, 'password' => $password);
+		if (Auth::attempt($credentials)) {
+			return "welcome back";
 		}
 		// $log = User::where('username','=',$username)->first();
 		// if (Hash::check($password,$log->password)) {

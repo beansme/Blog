@@ -9,7 +9,8 @@ class PostsController extends BaseController {
 	 */
 	public function index()
 	{	
-		$posts = Post::all();
+		$posts = Post::where('id', '>', 0)->paginate(3);
+
         return View::make('posts.index',compact('posts'));
          // return View::make('posts.index')->with(array('posts' => $posts));
 	}
@@ -47,8 +48,8 @@ class PostsController extends BaseController {
 	public function show($id)
 	{	
 		$post = Post::find($id);
-
-        return View::make('posts.show',compact('post'));
+		$comments = Comment::where('postId', '=', $id)->get();
+        return View::make('posts.show',compact('post','comments'));
 	}
 
 	/**
@@ -88,6 +89,7 @@ class PostsController extends BaseController {
 	{
 		$post = Post::find($id);
 		$post->delete();
+		
 		return Redirect::route('posts.index');
 	}
 

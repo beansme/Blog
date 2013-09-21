@@ -17,12 +17,11 @@ Route::get('users/{id}', function($id)
 });
 
 Route::resource('posts', 'PostsController');
+Route::resource('posts.comments', 'CommentsController');
 
 // Route::get('/','HomeController@getIndex');
 // Route::get('login','HomeController@getLogin');
 Route::controller('/','HomeController');
 
 
-
-?>
 

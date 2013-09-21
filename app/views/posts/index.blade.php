@@ -1,6 +1,7 @@
 @extends('master')
 
 @section('content')
+
   <ul class="posts">
   	@foreach ($posts as $post)	
 	  <li>
@@ -11,4 +12,5 @@
 	@endforeach
   </ul>
 	
+  {{ $posts->links() }}
 @stop
