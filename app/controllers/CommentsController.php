@@ -7,20 +7,20 @@ class CommentsController extends BaseController {
 	 *
 	 * @return Response
 	 */
-	// public function index($postId)
-	// {
-	// 	$comments = Comment::where('postId', '=', $postId)->get();
- //        return View::make('comments.index',compact('comments'));
-	// }
+	public function index($postId)
+	{
+		$comments = Comment::where('postId', '=', $postId)->get();
+        return View::make('comments.index',compact('comments'));
+	}
 
 	/**
 	 * Show the form for creating a new resource.
 	 *
 	 * @return Response
 	 */
-	// public function create()
+	// public function create($postId)
 	// {
- //        return View::make('comments.create');
+ //        return View::make('comments.create')->with(['postId' => $postId]);
 	// }
 
 	/**
@@ -30,13 +30,24 @@ class CommentsController extends BaseController {
 	 */
 	public function store($postId)
 	{
-		$comment = new Comment;
-		$comment->postId = $postId;
-		$comment->author = Input::get('author');
-		$comment->email = Input::get('email');
-		$comment->body = Input::get('body');
-		$comment->save();
-		return Redirect::route('posts.show',['posts'=>$postId]);
+		$input = Input::all();
+		$rule = ['email' => 'required', 'author' => 'required', 'body' =>'required'];
+		$validation = Validator::make($input, $rule);
+		
+		if ($validation->passes()) {
+			Comment::create($input);
+
+			return Redirect::route('posts.show',['posts' => $postId]);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation);
+		// $comment = new Comment;
+		// $comment->postId = $postId;
+		// $comment->author = Input::get('author');
+		// $comment->email = Input::get('email');
+		// $comment->body = Input::get('body');
+		// $comment->save();
+		// return Redirect::route('posts.show',['posts'=>$postId]);
 	}
 
 	/**
@@ -45,11 +56,11 @@ class CommentsController extends BaseController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($postId,$commentId)
-	{
-        // return View::make('comments.show');
-        return "comment id of ".$commentId." posts id of ".$postId;
-	}
+	// public function show($postId,$commentId)
+	// {
+ //        // return View::make('comments.show');
+ //        return "comment id of ".$commentId." posts id of ".$postId;
+	// }
 
 	/**
 	 * Show the form for editing the specified resource.

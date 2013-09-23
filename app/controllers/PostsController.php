@@ -22,7 +22,11 @@ class PostsController extends BaseController {
 	 */
 	public function create()
 	{
-        return View::make('posts.create');
+		if (Auth::user()) {
+        	return View::make('posts.create');
+		}
+
+        return Redirect::to('/');
 	}
 
 	/**
@@ -32,11 +36,54 @@ class PostsController extends BaseController {
 	 */
 	public function store()
 	{
-		$post = new Post;
-		$post->title = Input::get('title');
-		$post->body = Input::get('body');
-		$post->save();
-		return Redirect::route('posts.show',['posts'=>$post->id]);
+		$rule = [
+			'title' => 'required|min:3|max:200',
+			'body' => 'required',
+			'file' => 'mimes:jpg,jpeg,gif,png,bmp'
+		];
+
+
+		$title = Input::get('title');
+		$body = Input::get('body');
+		$description = Input::get('description');
+		if(empty($description)) $description = substr($body,0, 120);
+		$author_id =Input::get('author_id');
+		$tags =Input::get('tags');
+		if (Input::hasFile('file'))
+		{
+			$file = Input::file('file');
+			$ext = $file->guessClientExtension();
+			$filename = $file->getClientOriginalName();
+			$file->move(public_path().'/data', md5(date('YmdHis').$filename).'.'.$ext);
+			$picture = md5(date('YmdHis').$filename).'.'.$ext;
+		}
+		$new_post = array(
+		'title' 	=> $title,
+		'description' 	=> $description,
+		'body' 		=> $body,
+		'author_id' => $author_id,
+		'views' => 0,
+		'picture'   => $picture,
+		'tags'   => $tags
+		);
+
+		$validation = Validator::make($new_post, $rule);
+		
+		if ($validation->passes()) {
+			$post = new Post($new_post);
+			$post->save();
+			// Post::create($input);
+
+			// return Redirect::route('posts.index');
+			return Redirect::route('posts.show',['posts'=>$post->id]);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation);
+		// $post = new Post;
+		// $post->title = Input::get('title');
+		// $post->body = Input::get('body');
+		// $post->save();
+		// return Redirect::route('posts.show',['posts'=>$post->id]);
 	}
 
 	/**
@@ -48,8 +95,12 @@ class PostsController extends BaseController {
 	public function show($id)
 	{	
 		$post = Post::find($id);
-		$comments = Comment::where('postId', '=', $id)->get();
-        return View::make('posts.show',compact('post','comments'));
+		$post->views += 1;
+		$post->save();
+		// $author = Post::find($id)->users;
+		// $comments = Comment::where('post_id', '=', $id)->get();
+		// $comments = Post::find($id)->comments;
+        return View::make('posts.show',compact('post'));
 	}
 
 	/**
@@ -60,8 +111,13 @@ class PostsController extends BaseController {
 	 */
 	public function edit($id)
 	{
-		$post = Post::find($id);
-        return View::make('posts.edit',compact('post'));
+		if (Auth::user()) {
+        	$post = Post::find($id);
+        	return View::make('posts.edit',compact('post'));
+		}
+
+        return Redirect::to('/');
+		
 	}
 
 	/**
@@ -87,10 +143,16 @@ class PostsController extends BaseController {
 	 */
 	public function destroy($id)
 	{
-		$post = Post::find($id);
-		$post->delete();
+		if (Auth::user()) {
+        	$post = Post::find($id);
+        	if (Auth::user()->id == $post->author_id)
+				$post->delete();
+
+			return Redirect::route('posts.index');
+		}
+		return Redirect::to('/');
 		
-		return Redirect::route('posts.index');
 	}
+
 
 }

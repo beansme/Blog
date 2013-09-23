@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AddNicknameToUsersTable' => $baseDir . '/app/database/migrations/2013_09_22_105659_add_nickname_to_users_table.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
     'Carbon\\Carbon' => $vendorDir . '/nesbot/carbon/src/Carbon/Carbon.php',
     'ClassPreloader\\Application' => $vendorDir . '/classpreloader/classpreloader/src/ClassPreloader/Application.php',
@@ -20,6 +21,7 @@ return array(
     'ClassPreloader\\Parser\\NodeTraverser' => $vendorDir . '/classpreloader/classpreloader/src/ClassPreloader/Parser/NodeTraverser.php',
     'Comment' => $baseDir . '/app/models/Comment.php',
     'CommentsController' => $baseDir . '/app/controllers/CommentsController.php',
+    'CommentsTableSeeder' => $baseDir . '/app/database/seeds/CommentsTableSeeder.php',
     'CreateCommentsTable' => $baseDir . '/app/database/migrations/2013_09_21_054904_create_comments_table.php',
     'CreatePostsTable' => $baseDir . '/app/database/migrations/2013_09_20_095834_create_posts_table.php',
     'CreateUsersTable' => $baseDir . '/app/database/migrations/2013_09_20_084016_create_users_table.php',

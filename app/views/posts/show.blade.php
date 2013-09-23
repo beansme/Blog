@@ -1,43 +1,40 @@
-@extends('master')
+@extends('layouts.master')
 
 @section('title')
 	{{ $post->title }}
 @stop
 @section('content')
 	<h1> {{ $post->title }} </h1>
-	<p> {{ $post->author }} </p>
-	<p> {{ $post->body }} </p>
+	<p> 作者:{{ $post->author->username}}   最后发表：{{ date('Y-m-d', strtotime($post->updated_at)) }} 浏览次数：{{ $post->views}} </p>
+	<p> {{ "描述：".$post->description}} </p>
 
-	<a href="{{ route('posts.edit', ['posts' =>$post->id]) }}">编辑</a>
-	<!-- <a href="{{$post->id}}/edit">编辑</a> -->
-	{{ Form::open (array('url' => 'posts/'.$post->id,'method' => 'delete')) }}
-		{{ Form::submit('删除')}} 
-	{{ Form::close() }}
+	<p> {{ $post->body }} </p>
 	
+	
+	@if (Auth::check() && Auth::user()->id == $post->author->id) 
+		<a href="{{ route('posts.edit', ['posts' =>$post->id]) }}">编辑</a>
+		{{ Form::open(['route' => ['posts.destroy',$post->id], 'method' => 'delete'])}}
+		{{ Form::submit('删除')}} 
+		{{ Form::close()}}
+	@endif
 
 	<!-- comments -->
 
-
 	<h2>Comments</h2>
 	
-	@foreach($comments as $comment)
+	@foreach($post->comments as $comment)
 	  <div class="comment">
 	  	{{ $comment->author }}
 		{{ $comment->body }}
 	
-		<a href="{{ route('posts.comments.edit', ['posts' =>$comment->postId, 'comments' =>$comment->id]) }}">编辑</a>
-		{{ Form::open (array('url' => 'posts/'.$post->id.'/comments/'.$comment->id,'method' => 'delete')) }}
+		<a href="{{ route('posts.comments.edit', ['posts' => $comment->post_id, 'comments' =>$comment->id]) }}">编辑</a>
+
+		{{ Form::open(['route' => ['posts.comments.destroy',$comment->post_id,$comment->id], 'method' => 'delete'])}}
 			{{ Form::submit('删除')}} 
-		{{ Form::close() }}
+		{{ Form::close()}}
 	  </div>
 	@endforeach
 
-	{{ Form::open (array('url' => '/posts/'.$post->id.'/comments')) }}
-	<div>{{ Form::text('author') }}</div>
-	<div>{{ Form::text('email') }}</div>
-	<div>{{ Form::textarea('body')}}</div>
-	<div>{{ Form::submit('提交评论')}} </div>
-	{{ Form::close() }}
-
+	@include('comments.create');
 
 @stop
