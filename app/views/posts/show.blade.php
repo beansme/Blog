@@ -8,8 +8,12 @@
 	<p> 作者:{{ $post->author->username}}   最后发表：{{ date('Y-m-d', strtotime($post->updated_at)) }} 浏览次数：{{ $post->views}} </p>
 	<p> {{ "描述：".$post->description}} </p>
 
+
+	@if ($post->picture)
+		<img src="{{ asset('data').'/'.$post->picture }}" alt="">
+	@endif
+
 	<p> {{ $post->body }} </p>
-	
 	
 	@if (Auth::check() && Auth::user()->id == $post->author->id) 
 		<a href="{{ route('posts.edit', ['posts' =>$post->id]) }}">编辑</a>

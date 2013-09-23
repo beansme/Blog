@@ -42,28 +42,19 @@ class PostsController extends BaseController {
 			'file' => 'mimes:jpg,jpeg,gif,png,bmp'
 		];
 
-
+		$picture = "";
 		$title = Input::get('title');
 		$body = Input::get('body');
 		$description = Input::get('description');
 		if(empty($description)) $description = substr($body,0, 120);
 		$author_id =Input::get('author_id');
 		$tags =Input::get('tags');
-		if (Input::hasFile('file'))
-		{
-			$file = Input::file('file');
-			$ext = $file->guessClientExtension();
-			$filename = $file->getClientOriginalName();
-			$file->move(public_path().'/data', md5(date('YmdHis').$filename).'.'.$ext);
-			$picture = md5(date('YmdHis').$filename).'.'.$ext;
-		}
 		$new_post = array(
 		'title' 	=> $title,
 		'description' 	=> $description,
 		'body' 		=> $body,
 		'author_id' => $author_id,
 		'views' => 0,
-		'picture'   => $picture,
 		'tags'   => $tags
 		);
 
@@ -71,7 +62,18 @@ class PostsController extends BaseController {
 		
 		if ($validation->passes()) {
 			$post = new Post($new_post);
+			if (Input::hasFile('image'))
+			{
+				$file = Input::file('image');
+				$ext = $file->guessClientExtension();
+				$filename = $file->getClientOriginalName();
+				$file->move(public_path().'/data', md5(date('YmdHis').$filename).'.'.$ext);
+				$picture = md5(date('YmdHis').$filename).'.'.$ext;
+				$post->picture = $picture;
+			}
 			$post->save();
+
+
 			// Post::create($input);
 
 			// return Redirect::route('posts.index');

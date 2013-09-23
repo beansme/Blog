@@ -19,9 +19,9 @@
 		<p>{{ Form::label('body', '正文') }}</p>
 		{{ $errors->first('body', '<p class="error">:message</p>') }}
 		<p>{{ Form::textarea('body', Input::old('body'))}}</p>
-        <p>{{ Form::label('file', '附件上传') }}</p>
+        <p>{{ Form::label('image', '图片上传') }}</p>
         <p>
-        {{ Form::file('file') }}
+        {{ Form::file('image') }}
         </p>
         <!-- tags field -->
 		<p>{{ Form::label('tags', '标签') }}</p>
